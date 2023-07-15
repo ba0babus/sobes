@@ -1,0 +1,7 @@
+---
+- name: Add sysadmins
+  hosts: webservers
+  any_errors_fatal: true
+  roles:
+    - add_users
+
