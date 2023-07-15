@@ -1,5 +1,0 @@
----
-user1_name: uliankin
-user2_name: dimaivanov
-user1_passwd: "{{ user1_pass }}"
-user2_passwd: "{{ user2_pass }}"

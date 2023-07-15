@@ -1,0 +1,22 @@
+---
+- name: Add sysadmins
+  block:
+    - name: Add "{{ user1_name }}" user
+      user:
+        name: "{{ user1_name }}"
+        state: present
+        create_home: true
+        groups: 'sudo'
+        shell: /bin/bash
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_file: .ssh/id_rsa
+    - name: Add SSH key for "{{ user1_name }}"
+      ansible.posix.authorized_key:
+        user: "{{ user1_name }}"
+        state: present
+        key: "{{ lookup('file', '../files/user1.id_rsa.pub') }}"
+    - name: add sudoers directory
+
+  when: ansible_facts['distribution'] == 'Ubuntu'
+  become: true
