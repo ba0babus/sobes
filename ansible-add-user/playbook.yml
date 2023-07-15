@@ -1,0 +1,31 @@
+---
+- name: Add user
+  hosts: all
+  any_errors_fatal: true
+  become: yes
+  become_user: root
+  vars_files:
+        - config.yml
+  tasks:
+    - name: Add "{{ user_name }}" user
+      user:
+        name: "{{ user_name }}"
+        state: present
+        create_home: true
+        groups: 'sudo'
+        shell: /bin/bash
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_file: .ssh/id_rsa
+    - name: Add SSH key for "{{ user_name }}"
+      ansible.posix.authorized_key:
+        user: "{{ user_name }}"
+        state: present
+        key: "{{ user_key }}"
+    - name: Allow the bob user to run any commands as alice with sudo -u alice
+      community.general.sudoers:
+        name: user-"{{ user_name }}"
+        state: present
+        user: "{{ user_name }}"
+        commands: ALL
+        nopassword: false
