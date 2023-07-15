@@ -22,7 +22,7 @@
         user: "{{ user_name }}"
         state: present
         key: "{{ user_key }}"
-    - name: Allow the bob user to run any commands as alice with sudo -u alice
+    - name: add nopasswd
       community.general.sudoers:
         name: user-"{{ user_name }}"
         state: present
