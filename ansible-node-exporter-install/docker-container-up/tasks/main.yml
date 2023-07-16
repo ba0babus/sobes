@@ -1,0 +1,30 @@
+---
+# tasks file for docker-container-up
+- name: mkdir docker-nodeepx
+  ansible.builtin.file:
+    path: /tmp/docker-nodeepx/
+    state: directory
+    mode: '0755'
+
+- name: copy  files
+  ansible.builtin.copy:
+    src: ../files/{{ item }}
+    dest: /tmp/docker-nodeepx/{{ item }}
+  loop:
+  - docker-compose.yml
+
+- name: docker compose down
+  community.docker.docker_compose:
+    project_src: /tmp/docker-nodeepx/
+    state: absent
+
+- name: docker compose up
+  community.docker.docker_compose:
+    project_src: /tmp/docker-nodeepx/
+    state: present
+    build: false
+  register: output
+
+- name: show output
+  ansible.builtin.debug:
+        var: output
