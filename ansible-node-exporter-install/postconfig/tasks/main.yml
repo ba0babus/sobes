@@ -1,0 +1,31 @@
+---
+# tasks file for postconfig
+- name: add hostname and ip vars
+  add_host:
+    name:   "var_hold"
+    hostimya:  "{{ ansible_hostname }}"
+    ipadres:   "{{ ansible_default_ipv4.address }}"
+
+- name: print debug
+  debug:
+    msg: "Node Exporter hostname is {{ hostvars['var_hold']['hostimya'] }} \n Node Exporter ip is {{ hostvars['var_hold']['ipadres'] }}"
+  when: inventory_hostname in groups['target']
+
+- name: pizdets
+  ansible.builtin.blockinfile:
+    path: /home/denis/prometheus_stack/prometheus/prometheus.yml
+    state: present
+    marker: "# ANSIBLE MANAGED BLOCK #"
+    insertafter: scrape_configs
+    block: |2
+        - job_name: node_{{ hostvars['var_hold']['hostimya'] }}
+          static_configs:
+          - targets: ['{{ hostvars['var_hold']['ipadres'] }}:9100']
+  when: inventory_hostname in groups['prometheus_server']
+  
+- name: restart prometey
+  community.docker.docker_container:
+    name: prometheus
+    state: started
+    restart: yes
+  when: inventory_hostname in groups['prometheus_server']

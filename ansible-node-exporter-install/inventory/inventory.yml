@@ -1,0 +1,8 @@
+all:
+  children:
+    target:
+      hosts:
+        158.160.52.241:
+    prometheus_server:
+      hosts:
+        51.250.74.234:
